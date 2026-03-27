@@ -1,0 +1,49 @@
+# ecommerce-data-analysis
+ecommerce-data-analysis/
+│── data/
+│   └── ecommerce_data.csv
+│── sql/
+│   └── analysis.sql
+│── python/
+│   └── analysis.ipynb
+│── dashboard/
+│   └── dashboard.pbix
+│── README.md
+OrderID,OrderDate,CustomerID,Category,Product,Quantity,Price,Region
+1001,2023-01-01,C001,Electronics,Mobile,2,15000,South
+1002,2023-01-05,C002,Clothing,T-Shirt,3,500,North
+1003,2023-01-07,C003,Electronics,Laptop,1,50000,West
+1004,2023-01-10,C001,Home,Chair,2,2000,South
+1005,2023-01-12,C004,Clothing,Jeans,2,1200,East
+-- Total Revenue
+SELECT SUM(Quantity * Price) AS Total_Revenue FROM ecommerce_data;
+
+-- Top Selling Products
+SELECT Product, SUM(Quantity) AS Total_Quantity
+FROM ecommerce_data
+GROUP BY Product
+ORDER BY Total_Quantity DESC;
+
+-- Sales by Region
+SELECT Region, SUM(Quantity * Price) AS Revenue
+FROM ecommerce_data
+GROUP BY Region;
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load data
+df = pd.read_csv('../data/ecommerce_data.csv')
+
+# Total revenue
+df['Revenue'] = df['Quantity'] * df['Price']
+
+print("Total Revenue:", df['Revenue'].sum())
+
+# Top products
+top_products = df.groupby('Product')['Revenue'].sum().sort_values(ascending=False)
+print(top_products)
+
+# Plot
+top_products.plot(kind='bar')
+plt.title("Top Products by Revenue")
+plt.show()
